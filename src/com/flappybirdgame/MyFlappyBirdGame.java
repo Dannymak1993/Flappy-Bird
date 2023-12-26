@@ -10,29 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-class Pipe {
-    int x, height, gap, width;
-
-    public Pipe(int x, int height, int gap, int width) {
-        this.x = x;
-        this.height = height;
-        this.gap = gap;
-        this.width = width;
-    }
-
-    public void move() {
-        x -= 5;
-    }
-
-    public Rectangle getTopBounds() {
-        return new Rectangle(x, 0, width, height);
-    }
-
-    public Rectangle getBottomBounds() {
-        return new Rectangle(x, height + gap, width, MyFlappyBirdGame.HEIGHT - (height + gap));
-    }
-}
-
 public class MyFlappyBirdGame extends JFrame {
     public static final int WIDTH = 800;
     public static final int HEIGHT = 600;
@@ -158,10 +135,12 @@ public class MyFlappyBirdGame extends JFrame {
         g2d.drawImage(bird.birdImage, bird.x, bird.y, bird.size, bird.size, null);
 
         // Draw pipes
-        g2d.setColor(Color.green);
         for (Pipe pipe : pipes) {
-            g2d.fillRect(pipe.x, 0, pipe.width, pipe.height);
-            g2d.fillRect(pipe.x, pipe.height + pipe.gap, pipe.width, HEIGHT - (pipe.height + pipe.gap));
+            // Draw top pipe
+            g2d.drawImage(pipe.topPipeImage, pipe.x, 0, pipe.width, pipe.height, null);
+
+            // Draw bottom pipe
+            g2d.drawImage(pipe.bottomPipeImage, pipe.x, pipe.height + pipe.gap, pipe.width, HEIGHT - (pipe.height + pipe.gap), null);
         }
 
         // Draw ground

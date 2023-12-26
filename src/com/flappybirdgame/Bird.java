@@ -29,7 +29,7 @@ public class Bird {
     }
 
     public void move() {
-        y += 6;
+        y += 5;
     }
 
     public Rectangle getBounds() {
