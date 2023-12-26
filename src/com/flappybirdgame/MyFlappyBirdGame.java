@@ -17,6 +17,7 @@ public class MyFlappyBirdGame extends JFrame {
     private Bird bird;
     private List<Pipe> pipes;
     private Timer timer;
+    private Background background;
 
     public MyFlappyBirdGame() {
         setTitle("Flappy Bird Game");
@@ -26,6 +27,7 @@ public class MyFlappyBirdGame extends JFrame {
 
         bird = new Bird(100, HEIGHT / 2, 30);
         pipes = new ArrayList<>();
+        background = new Background("background.png");
         timer = new Timer(20, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -66,13 +68,12 @@ public class MyFlappyBirdGame extends JFrame {
     private void update() {
         bird.move();
 
+        List<Pipe> pipesToRemove = new ArrayList<>();
+
         for (Pipe pipe : pipes) {
             pipe.move();
             if (pipe.x + pipe.width < 0) {
-                pipes.remove(pipe);
-                generatePipe();
-                generatePipe(); // Add another call to increase pipe generation frequency
-                break;
+                pipesToRemove.add(pipe);
             }
 
             if (bird.getBounds().intersects(pipe.getTopBounds()) || bird.getBounds().intersects(pipe.getBottomBounds())) {
@@ -81,9 +82,18 @@ public class MyFlappyBirdGame extends JFrame {
             }
         }
 
+        // Remove pipes that are out of the screen
+        pipes.removeAll(pipesToRemove);
+
         if (bird.y > HEIGHT || bird.y < 0) {
             gameOver();
             return;
+        }
+
+        // Generate new pipes if needed
+        if (pipes.isEmpty()) {
+            generatePipe();
+            generatePipe();
         }
     }
 
@@ -122,14 +132,18 @@ public class MyFlappyBirdGame extends JFrame {
     }
 
     @Override
+    public void update(Graphics g) {
+        super.update(g); // Call the update method of the superclass
+        paint(g);
+    }
+
+    @Override
     public void paint(Graphics g) {
-        super.paint(g);
         Graphics2D g2d = (Graphics2D) g;
 
-        // Draw background
-        g2d.setColor(Color.cyan);
-        g2d.fillRect(0, 0, WIDTH, HEIGHT);
-
+        // Draw background using Background class
+        background.draw(g2d, WIDTH, HEIGHT);
+        
         // Draw bird
         int birdSize = 60;
         g2d.drawImage(bird.birdImage, bird.x, bird.y, bird.size, bird.size, null);
