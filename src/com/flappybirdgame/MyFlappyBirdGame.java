@@ -81,6 +81,7 @@ public class MyFlappyBirdGame extends JFrame {
     private void initGame() {
         bird = new Bird(100, HEIGHT / 2, 30);
         pipes.clear();
+        pipesGenerated = false;
         generatePipe(); // Add this line to generate the initial pipe
         timer.start();
     }
