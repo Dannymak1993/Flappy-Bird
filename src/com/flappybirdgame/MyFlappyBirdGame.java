@@ -28,6 +28,7 @@ public class MyFlappyBirdGame extends JFrame {
         bird = new Bird(100, HEIGHT / 2, 30);
         pipes = new ArrayList<>();
         background = new Background("background.png");
+
         timer = new Timer(20, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -60,8 +61,7 @@ public class MyFlappyBirdGame extends JFrame {
     private void initGame() {
         bird = new Bird(100, HEIGHT / 2, 30);
         pipes.clear();
-        pipesGenerated = false;
-        generatePipe(); // Add this line to generate the initial pipe
+        generatePipe();
         timer.start();
     }
 
@@ -82,7 +82,6 @@ public class MyFlappyBirdGame extends JFrame {
             }
         }
 
-        // Remove pipes that are out of the screen
         pipes.removeAll(pipesToRemove);
 
         if (bird.y > HEIGHT || bird.y < 0) {
@@ -90,9 +89,7 @@ public class MyFlappyBirdGame extends JFrame {
             return;
         }
 
-        // Generate new pipes if needed
         if (pipes.isEmpty()) {
-            generatePipe();
             generatePipe();
         }
     }
@@ -107,33 +104,22 @@ public class MyFlappyBirdGame extends JFrame {
         }
     }
 
-    private boolean pipesGenerated = false;  // Add this variable
-
     private void generatePipe() {
-        if (!pipesGenerated) {
-            Random random = new Random();
-            int numberOfPipes = 100; // Adjust this number based on your preference
+        Random random = new Random();
+        int gap = 150;
+        int pipeWidth = 50;
 
-            // Set minimum and maximum heights for the pipes
-            int minHeight = 50;
-            int maxHeight = HEIGHT - 150 - minHeight;
-
-            for (int i = 0; i < numberOfPipes; i++) {
-                int pipeHeight = random.nextInt(maxHeight - minHeight + 1) + minHeight;
-                int gap = 150;
-                int pipeWidth = 50;
-                Pipe pipe = new Pipe(WIDTH + i * 300, pipeHeight, gap, pipeWidth);
-                pipes.add(pipe);
-            }
-
-            System.out.println("Generated " + numberOfPipes + " pipes");
-            pipesGenerated = true;  // Set the flag to true to prevent further generation
+        // Check if there are less than two pipes
+        if (pipes.size() < 2) {
+            int pipeHeight = random.nextInt(HEIGHT - 200) + 50;
+            Pipe pipe = new Pipe(WIDTH, pipeHeight, gap, pipeWidth);
+            pipes.add(pipe);
         }
     }
 
     @Override
     public void update(Graphics g) {
-        super.update(g); // Call the update method of the superclass
+        super.update(g);
         paint(g);
     }
 
@@ -143,9 +129,8 @@ public class MyFlappyBirdGame extends JFrame {
 
         // Draw background using Background class
         background.draw(g2d, WIDTH, HEIGHT);
-        
+
         // Draw bird
-        int birdSize = 60;
         g2d.drawImage(bird.birdImage, bird.x, bird.y, bird.size, bird.size, null);
 
         // Draw pipes
